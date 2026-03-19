@@ -1,20 +1,20 @@
 ## 1. How did you ensure idempotency?
 Ans. This task uses three distinct idempotency strategies across its endpoints:
-a) Session Creation — MongoDB Upsert ($setOnInsert)
-b) Event Addition — Unique Compound Index + Duplicate Key Handling
-c) Session Completion — Conditional Update + Status Check
+    - Session Creation — MongoDB Upsert ($setOnInsert)
+    - Event Addition — Unique Compound Index + Duplicate Key Handling
+    - Session Completion — Conditional Update + Status Check
 
 ## 2. How does your design behave under concurrent requests?
 Ans.
-a) Duplicate session creation ->  Atomic `upsert` and unique index
-b) Duplicate event submission -> Unique compound index + `11000` catch and Exactly one event stored.
-c) Duplicate completion -> Atomic conditional update (`$ne` filter) | `endedAt` set once, both callers get result.
+- Duplicate session creation ->  Atomic `upsert` and unique index
+- Duplicate event submission -> Unique compound index + `11000` catch and Exactly one event stored.
+- Duplicate completion -> Atomic conditional update (`$ne` filter) | `endedAt` set once, both callers get result.
 
 ## 3. What MongoDB indexes did you choose and why?
 Ans.
-a) `sessionId` — Unique Index on `ConversationSession` and Purpose - Fast lookups + prevents duplicate sessions
-b) `{ sessionId, eventId }` — Compound Unique Index on `ConversationEvent` and Purpose - Scoped uniqueness + idempotent event creation
-c) `{ sessionId, timestamp }` — Compound Index on `ConversationEvent` and purpose - Efficient sorted pagination for session events
+- `sessionId` — Unique Index on `ConversationSession` and Purpose - Fast lookups + prevents duplicate sessions
+- `{ sessionId, eventId }` — Compound Unique Index on `ConversationEvent` and Purpose - Scoped uniqueness + idempotent event creation
+- `{ sessionId, timestamp }` — Compound Index on `ConversationEvent` and purpose - Efficient sorted pagination for session events
 
 ## 4. How would you scale this system for millions of sessions per day?
 Ans.
