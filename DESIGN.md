@@ -1,8 +1,8 @@
 ## 1. How did you ensure idempotency?
 Ans. This task uses three distinct idempotency strategies across its endpoints:
-    - Session Creation — MongoDB Upsert ($setOnInsert)
-    - Event Addition — Unique Compound Index + Duplicate Key Handling
-    - Session Completion — Conditional Update + Status Check
+    **Session Creation** — MongoDB Upsert ($setOnInsert)
+    **Event Addition** — Unique Compound Index + Duplicate Key Handling
+    **Session Completion** — Conditional Update + Status Check
 
 ## 2. How does your design behave under concurrent requests?
 Ans.
